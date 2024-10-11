@@ -1,30 +1,69 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="container">
+    <div class="sectionFishSelect">
+      <TypeOfFish v-on:addFishToAquarium="addFishToAquarium" />
+    </div>
+
+    <div class="sectionAquarium">
+      <AquariumSec v-on:removeFish="removeFish" :aquarium="aquarium" />
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+<script>
+import TypeOfFish from "./components/TypeOfFish.vue";
+import AquariumSec from "./components/AquariumSec.vue";
+
+export default {
+  name: "App",
+  data: () => {
+    return {
+      aquarium: []
+    };
+  },
+  methods: {
+    addFishToAquarium(fish) {
+      this.aquarium.push(fish);
+    },
+    removeFish(fish) {
+      this.aquarium.splice(this.aquarium.indexOf(fish), 1);
+    }
+  },
+  components: { TypeOfFish, AquariumSec }
+};
+</script>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #203D7F;
+    color: aliceblue;
+    overflow: hidden;
+  }
+  .sectionFishSelect{
+    height: 100vh;
+  }
+  .sectionAquarium {
+    background-image: url('./assets/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 40% 60%;
+  }
+  @media (max-width: 768px) {
+    body{
+      overflow: auto;
+    }
+    .container {
+      grid-template-columns: 1fr;
+    }
+
+  }
 </style>
