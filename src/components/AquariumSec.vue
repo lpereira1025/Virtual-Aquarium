@@ -3,10 +3,23 @@
     <div class="aquarium">
       <div 
         class="boxFish" 
-        v-for="(fish, index) in aquarium" :key="index" :class="fish.animation">
-        <button class="removeFish" v-on:click="removeFish(fish)">X</button>
+        v-for="(fish, index) in aquarium" :key="index" 
+        :class="[fish.animation, fish.class, { dead: fish.isDead }]" 
+        @click="resetTimer(fish)"
+      >
+        <button v-if="fish.timer <= 0" class="removeFish" @click="removeFish(fish)">X</button>
+        <button 
+          v-if="fish.feedMeVisible" 
+          class="feedMe"
+          @click="resetTimer(fish)"
+        >
+          Feed me!
+        </button>
         <img class="fishInsideAquarium" :src="fish.image" />
-        <h3 class="nameOfFishInsideAquarium">{{fish.name}}</h3>
+        <h3 class="nameOfFishInsideAquarium">{{ fish.name }}</h3>
+        <div class="timer-bar">
+          <div class="timer" :style="{ width: `${fish.timerWidth}%` }"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -15,11 +28,20 @@
 <script>
 export default {
   props: ["aquarium"],
+  mounted() {
+    this.aquarium.forEach(fish => fish.startTimer());
+  },
   methods: {
+    resetTimer(fish) {
+      fish.resetTimer();
+    },
     removeFish(fish) {
       this.$emit("removeFish", fish);
-    }
-  }
+    },
+  },
+  beforeUnmount() {
+    this.aquarium.forEach(fish => clearInterval(fish.timerInterval));
+  },
 };
 </script>
 
@@ -27,7 +49,7 @@ export default {
   .aquarium {
     position: relative;
     padding: 1rem;
-    width: 90%;
+    width: 86%;
     height: 70vh;
     display: flex;
     justify-content: center;
@@ -38,16 +60,26 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: end;
-    gap: 1rem;
     padding: 1rem;
     position: absolute;
-    animation: slide-slow 60s linear infinite, slide-slow-img 60s linear infinite;
+    animation-duration: 55s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
   }
   .boxFish.swimDiagonalUp {
-  animation: swimDiagonalUp 60s linear infinite;
+    animation-name: swimDiagonalUp;
   }
   .boxFish.swimDiagonalDown {
-    animation: swimDiagonalDown 60s linear infinite;
+    animation-name: swimDiagonalDown;
+  }
+  .boxFish.swimDiagonalDownReverse {
+    animation-name: swimDiagonalDownReverse;
+  }
+  .boxFish.swimDiagonalUpReverse {
+    animation-name: swimDiagonalUpReverse;
+  }
+  .boxFish.swimDiagonalMixed {
+    animation-name: swimDiagonalMixed;
   }
   .removeFish {
     background-color: red;
@@ -72,39 +104,40 @@ export default {
     padding: 0.3rem;
     background-color: #090a0a75;
   }
-  @keyframes slide-slow {
-    0% {
-    left: calc(100% - 88px);
+  .timer-bar {
+    width: 100%;
+    height: 0.4rem;
+    background-color: #ddd;
+    position: relative;
   }
-  49.99% {
-    left: 0%;
+  .timer {
+    height: 100%;
+    background-color: #76c7c0;
   }
-  50% {
-    left: 0%;
+  .feedMe{
+    padding: 0.7rem;
+    border-radius: 1rem;
+    color: black;
+    background-color: #ddd;
+    cursor: pointer;
+
   }
-  99.99% {
-    left: calc(100% - 88px);
+  .boxFish.dead {
+    animation: swimToBottom 3s forwards;
+    position: absolute;
+    bottom: 0;
   }
-  100% {
-    left: calc(100% - 88px);
+  .boxFish.dead.left {
+    animation: swimToBottomLeft 3s forwards;
   }
+  .boxFish.dead.right {
+    animation: swimToBottomRight 3s forwards;
   }
-  @keyframes slide-slow-img {
-    0% {
-    transform: scaleX(-1);
-    }
-    48% {
-      transform: scaleX(-1);
-    }
-    50% {
-      transform: scaleX(1);
-    }
-    98% {
-      transform: scaleX(1);
-    }
-    100% {
-      transform: scaleX(-1);
-    }
+  .boxFish.dead.farleft {
+    animation: swimToBottomFarLeft 3s forwards;
+  }
+  .boxFish.dead.farRight {
+    animation: swimToBottomFarRight 3s forwards;
   }
   @keyframes swimDiagonalUp {
     0% {
@@ -159,5 +192,106 @@ export default {
       top: 0%;
       transform: translate(-50%, 0);
     }
+  }
+  @keyframes swimDiagonalDownReverse {
+    0% {
+      left: 50%;
+      top: 0%;
+      transform: translate(-50%, 0);
+    }
+    25% {
+      left: 0%;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+    50% {
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, 0);
+    }
+    75% {
+      left: calc(100% - 88px);
+      top: 50%;
+      transform: translate(-50%, 50%);
+    }
+    100% {
+      left: 50%;
+      top: 0%;
+      transform: translate(-50%, 0);
+    }
+  }
+  @keyframes swimDiagonalUpReverse {
+    0% {
+      left: 50%;
+      top: 0%;
+      left: 0%;
+    }
+    25% {
+      left: 0%;
+      top: 50%;
+      transform: translate(0, 50%);
+    }
+    50% {
+      left: 50%;
+      top: 0%;
+      transform: translate(-50%, 0);
+    }
+    75% {
+      left: calc(100% - 88px);
+      top: 50%;
+      transform: translate(-50%, 50%);
+    }
+    100% {
+      left: 50%;
+      top: 0%;
+      transform: translate(-50%, 0);
+    }
+  }
+  @keyframes swimDiagonalMixed {
+    0% {
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, 0);
+    }
+    25% {
+      left: calc(100% - 88px);
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    50% {
+      left: 50%;
+      top: 0%;
+      transform: translate(-50%, 0);
+    }
+    75% {
+      left: 0%;
+      top: 50%;
+      transform: translate(0, 50%);
+    }
+    100% {
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, 0);
+    }
+  }
+  @keyframes swimToBottom {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+  }
+  @keyframes swimToBottomLeft {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(100%) translateX(-120%); }
+  }
+  @keyframes swimToBottomRight {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(100%) translateX(90%); }
+  }
+  @keyframes swimToBottomFarLeft {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(100%) translateX(-105%); }
+  }
+  @keyframes swimToBottomFarRight {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(100%) translateX(175%); }
   }
 </style>

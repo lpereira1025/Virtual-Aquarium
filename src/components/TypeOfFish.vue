@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import Fish from '../models/Fish.js';
 import GoldenPurple from '../assets/golden-purple-fish.png';
 import GoldFish from '../assets/goldfish.png';
 import Guppie from '../assets/Guppie.png';
@@ -41,17 +42,18 @@ import Tropical from '../assets/tropical-fish.png';
 import Tuna from '../assets/tuna.png';
 
 export default {
-  data: () => {
+  emits: ['addFishToAquarium'],
+  data() {
     return {
       fishCollection: [
-        { image: GoldenPurple , animation: "swimDiagonalUp"},
-        { image: GoldFish , animation: "swimDiagonalDown"},
-        { image: Guppie , animation: "swimDiagonalUp"},
-        { image: Tropical , animation: "swimDiagonalDown"},
-        { image: Tuna}
+        { name: 'Golden Purple', image: GoldenPurple, animation: 'swimDiagonalUp' },
+        { name: 'Gold Fish', image: GoldFish, animation: 'swimDiagonalDown' },
+        { name: 'Guppie', image: Guppie, animation: 'swimDiagonalDownReverse' },
+        { name: 'Tropical', image: Tropical, animation: 'swimDiagonalUpReverse' },
+        { name: 'Tuna', image: Tuna, animation: 'swimDiagonalMixed' },
       ],
       selectedFish: null,
-      fishName: ''
+      fishName: '',
     };
   },
   methods: {
@@ -60,13 +62,21 @@ export default {
     },
     addFishToAquarium() {
       if (this.selectedFish) {
-        const fishToAdd = { ...this.selectedFish, name: this.fishName || 'Unnamed Fish' };
-        this.$emit('addFishToAquarium', fishToAdd);
-        this.selectedFish = null;
-        this.fishName = '';
+      const fishToAdd = new Fish(this.fishName || 'Unnamed Fish', this.selectedFish.image, this.selectedFish.animation);
+      const randomClass = this.getRandomFishClass();
+      fishToAdd.class = randomClass;
+      fishToAdd.startTimer();
+      this.$emit('addFishToAquarium', fishToAdd);
+      this.selectedFish = null;
+      this.fishName = '';
       }
-    }
+    },
+    getRandomFishClass() {
+    const classes = ['dead', 'left', 'right', 'farLeft', 'farRight'];
+    const randomIndex = Math.floor(Math.random() * classes.length);
+    return classes[randomIndex];
   }
+  },
 };
 </script>
 
