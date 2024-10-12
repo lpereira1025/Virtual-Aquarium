@@ -87,8 +87,8 @@ cd Virtual-Aquarium</code></pre>
         <p>ou, se você estiver usando o yarn:</p>
         <pre><code>yarn serve</code></pre>
     </li>
-    <li><strong>Acesse o aplicativo:</strong>
-        <p>Abra seu navegador e vá para <code>http://localhost:8080</code> (ou a porta que o terminal indicar).</p>
+    <li><strong>Acesse a demonstração</strong>
+        <a href="https://www.loom.com/share/fb632de47d7a46d6bdd4ceb6731b8a13?t=39&sid=48c48677-58b0-42b1-9ed6-e5c21eab2afb">Video Apresentação</a>
     </li>
 </ol>
 
