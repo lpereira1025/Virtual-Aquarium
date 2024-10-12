@@ -5,26 +5,26 @@ export default class Fish {
     this.name = name || 'Unnamed Fish';
     this.image = image;
     this.animation = animation;
-    this.isAlive = true;
     this.isDead = false;
     this.deadImage = DeadImage;
-    this.timer = 15;
-    this.timerWidth = 100;
+    this.timer = 0;
+    this.timerWidth = 0;
     this.timerInterval = null;
-    this.feedMeVisible = true;
+    this.feedMeVisible = false;
   }
 
   startTimer() {
     this.timerInterval = setInterval(() => {
-      this.timer--;
-      this.timerWidth = (this.timer / 15) * 100;
-      console.log(`Timer: ${this.timer}, Timer Width: ${this.timerWidth}`);
+      if (this.timer < 15) {
+        this.timer++;
+        this.timerWidth = (this.timer / 15) * 100;
 
-      if (this.timer === 7) {
-        this.feedMeVisible = true;
+        if (this.timer === 7) {
+          this.feedMeVisible = true;
+        }
       }
 
-      if (this.timer <= 0) {
+      if (this.timer >= 15) { 
         clearInterval(this.timerInterval);
         this.die();
       }
@@ -33,12 +33,8 @@ export default class Fish {
 
   feed() {
     this.feedMeVisible = false;
-    this.timer = 15; 
-    this.timerWidth = 100; 
-  }
-
-  resetTimer() {
-    clearInterval(this.timerInterval);
+    this.timer = 0; 
+    this.timerWidth = 0; 
     this.startTimer();
   }
 

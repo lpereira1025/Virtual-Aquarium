@@ -50,12 +50,24 @@ export default {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 100vh;
+    height: 110vh;
   }
 
   .container {
     display: grid;
-    grid-template-columns: 40% 60%;
+    grid-template-columns: 20% 80%;
+  }
+
+  @media (max-width: 1800px) {
+  .container {
+      grid-template-columns: 40% 60%;
+    }
+  }
+
+  @media (max-width: 1024px) {
+  .container {
+      grid-template-columns: 40% 70%;
+    }
   }
   @media (max-width: 768px) {
     body{

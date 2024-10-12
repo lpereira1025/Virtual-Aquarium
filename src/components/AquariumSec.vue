@@ -5,13 +5,12 @@
         class="boxFish" 
         v-for="(fish, index) in aquarium" :key="index" 
         :class="[fish.animation, fish.class, { dead: fish.isDead }]" 
-        @click="resetTimer(fish)"
       >
-        <button v-if="fish.timer <= 0" class="removeFish" @click="removeFish(fish)">X</button>
+        <button v-if="fish.timer >= 15" class="removeFish" @click="removeFish(fish)">X</button>
         <button 
           v-if="fish.feedMeVisible" 
           class="feedMe"
-          @click="resetTimer(fish)"
+          @click="fish.feed()"
         >
           Feed me!
         </button>
@@ -32,9 +31,6 @@ export default {
     this.aquarium.forEach(fish => fish.startTimer());
   },
   methods: {
-    resetTimer(fish) {
-      fish.resetTimer();
-    },
     removeFish(fish) {
       this.$emit("removeFish", fish);
     },
@@ -105,7 +101,7 @@ export default {
     background-color: #090a0a75;
   }
   .timer-bar {
-    width: 100%;
+    width: 8rem;
     height: 0.4rem;
     background-color: #ddd;
     position: relative;

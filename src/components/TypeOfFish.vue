@@ -62,27 +62,32 @@ export default {
     },
     addFishToAquarium() {
       if (this.selectedFish) {
-      const fishToAdd = new Fish(this.fishName || 'Unnamed Fish', this.selectedFish.image, this.selectedFish.animation);
-      const randomClass = this.getRandomFishClass();
-      fishToAdd.class = randomClass;
-      fishToAdd.startTimer();
-      this.$emit('addFishToAquarium', fishToAdd);
-      this.selectedFish = null;
-      this.fishName = '';
+        
+        const fishToAdd = new Fish(this.fishName || 'Unnamed Fish', this.selectedFish.image, this.selectedFish.animation);
+        const randomClass = this.getRandomFishClass();
+        fishToAdd.class = randomClass;
+        this.$emit('addFishToAquarium', fishToAdd);
+        this.selectedFish = null;
+        this.fishName = '';
+        this.$nextTick(() => {
+          fishToAdd.startTimer(); 
+        });
       }
     },
     getRandomFishClass() {
-    const classes = ['dead', 'left', 'right', 'farLeft', 'farRight'];
-    const randomIndex = Math.floor(Math.random() * classes.length);
-    return classes[randomIndex];
-  }
+      const classes = ['dead', 'left', 'right', 'farLeft', 'farRight'];
+      const randomIndex = Math.floor(Math.random() * classes.length);
+      return classes[randomIndex];
+    },
   },
 };
 </script>
 
+
+
 <style>
   section {
-    padding: 1rem;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
